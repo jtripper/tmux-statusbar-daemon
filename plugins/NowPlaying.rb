@@ -34,7 +34,12 @@ class MPC
   def now_playing
     status          = cmd("status")
 
-    return nil if not status["songid"]
+    if not status["songid"]
+      f = File.open("status", "a+")
+      f << status
+      f.close
+      return nil
+    end
 
     song            = cmd("playlistid #{status["songid"]}")
     song["Elapsed"] = seconds(status["elapsed"].to_f)
@@ -56,20 +61,25 @@ class NowPlaying < StatusBarPlugin
   def initialize
     @output     = ""
     @interval   = 1
-    @mpd_client = MPC.new
+    @mpd_client = nil
   end
 
   def run
     song_format = "#{red}%s #{blue}(#{yellow}%s/%s#{blue}) #{red}%s#{blue}"
 
     begin
+      @mpd_client = MPC.new if not @mpd_client
       song = @mpd_client.now_playing
-    rescue
-      @mpd_client = MPC.new
-      song = @mpd_client.now_playing
+    rescue Exception => ex
+      @output = "Error: #{ex.message}"
+      @mpd_client = nil
+      return
     end
 
-    return if not song
+    if not song
+      @output = "Nothing playing"
+      return
+    end
 
     elapsed     = song["Elapsed"]
     total       = song["Time"]
