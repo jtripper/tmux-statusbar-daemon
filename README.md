@@ -3,6 +3,8 @@ Tmux Statusbar Daemon
 
 Tmux Statusbar Daemon is a daemon for creating dynamic status bars for tmux. The daemon is based on plugins and allows a user to customize their tmux statusbar in Ruby.
 
+![screenshot](screenshot.png)
+
 ## Installation
 
 The daemon can be installed by cloning the git repository and then adding the following lines to the tmux configuration (~/.tmux.conf):
