@@ -34,12 +34,7 @@ class MPC
   def now_playing
     status          = cmd("status")
 
-    if not status["songid"]
-      f = File.open("status", "a+")
-      f << status
-      f.close
-      return nil
-    end
+    return nil if not status["songid"]
 
     song            = cmd("playlistid #{status["songid"]}")
     song["Elapsed"] = seconds(status["elapsed"].to_f)
